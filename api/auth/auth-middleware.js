@@ -24,9 +24,9 @@ function restricted(req, res, next) {
   }
 */
 async function checkUsernameFree(req, res, next) {
-  const user = User.findBy({ username: req.body.username });
+  const user = await User.findBy({ username: req.body.username }).first();
 
-  if (user.username) {
+  if (user && user.username) {
     res.status(422).json({ message: 'Username taken' });
   } else {
     next();
@@ -43,7 +43,8 @@ async function checkUsernameFree(req, res, next) {
 */
 async function checkUsernameExists(req, res, next) {
   const user = await User.findBy({ username: req.body.username }).first();
-  if (user.username) {
+  
+  if (user && user.username) {
     next();
   } else {
     res.status(401).json({ message: 'Invalid credentials' });
